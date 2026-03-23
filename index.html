@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>UserFlow — User Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">👥</div>
+      <div class="sidebar-logo-text">UserFlow</div>
+    </div>
+
+    <div class="sidebar-label">Main</div>
+    <button class="nav-item active"><span class="nav-icon">👥</span> Users <span class="nav-badge" id="sideCount">8</span></button>
+    <button class="nav-item"><span class="nav-icon">🛡️</span> Roles</button>
+    <button class="nav-item"><span class="nav-icon">📊</span> Analytics</button>
+
+    <div class="sidebar-label">Settings</div>
+    <button class="nav-item"><span class="nav-icon">⚙️</span> Preferences</button>
+    <button class="nav-item"><span class="nav-icon">🔔</span> Notifications</button>
+    <button class="nav-item"><span class="nav-icon">🔒</span> Security</button>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">SA</div>
+        <div>
+          <div class="sidebar-user-name">Super Admin</div>
+          <div class="sidebar-user-role">Administrator</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="page-title">User <span>Management</span></div>
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" id="searchInput" placeholder="Search by name or email…" oninput="renderTable()"/>
+      </div>
+      <select class="filter-select" id="roleFilter" onchange="renderTable()">
+        <option value="">All Roles</option>
+        <option value="Admin">Admin</option>
+        <option value="Editor">Editor</option>
+        <option value="Moderator">Moderator</option>
+        <option value="Viewer">Viewer</option>
+      </select>
+      <select class="filter-select" id="statusFilter" onchange="renderTable()">
+        <option value="">All Status</option>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+      </select>
+      <button class="btn-add" onclick="openAddModal()">＋ Add User</button>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- STATS -->
+      <div class="stats-row">
+        <div class="stat-card total">
+          <div class="stat-icon-wrap">👥</div>
+          <div><div class="stat-num" id="statTotal">0</div><div class="stat-lbl">Total Users</div></div>
+        </div>
+        <div class="stat-card active-s">
+          <div class="stat-icon-wrap">✅</div>
+          <div><div class="stat-num" id="statActive">0</div><div class="stat-lbl">Active</div></div>
+        </div>
+        <div class="stat-card inactive-s">
+          <div class="stat-icon-wrap">⛔</div>
+          <div><div class="stat-num" id="statInactive">0</div><div class="stat-lbl">Inactive</div></div>
+        </div>
+        <div class="stat-card admin-s">
+          <div class="stat-icon-wrap">🛡️</div>
+          <div><div class="stat-num" id="statAdmins">0</div><div class="stat-lbl">Admins</div></div>
+        </div>
+      </div>
+
+      <!-- TABLE -->
+      <div class="table-wrap">
+        <div class="table-header">
+          <div class="table-title">All Users</div>
+          <div class="table-count" id="tableCount">0 users</div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>User</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Joined</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="userTableBody"></tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ADD/EDIT MODAL -->
+<div class="modal-overlay" id="formModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('formModal')">✕</button>
+    <div class="modal-title" id="formTitle">Add New User</div>
+    <div class="form-row">
+      <div class="form-group half">
+        <label class="form-label">First Name</label>
+        <input class="form-input" id="fFirst" placeholder="Ravi"/>
+      </div>
+      <div class="form-group half">
+        <label class="form-label">Last Name</label>
+        <input class="form-input" id="fLast" placeholder="Sharma"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <input class="form-input" id="fEmail" type="email" placeholder="ravi@example.com"/>
+    </div>
+    <div class="form-row">
+      <div class="form-group half">
+        <label class="form-label">Role</label>
+        <select class="form-select" id="fRole">
+          <option>Admin</option>
+          <option>Editor</option>
+          <option>Moderator</option>
+          <option>Viewer</option>
+        </select>
+      </div>
+      <div class="form-group half">
+        <label class="form-label">Department</label>
+        <input class="form-input" id="fDept" placeholder="Engineering"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('formModal')">Cancel</button>
+      <button class="btn-save" onclick="saveUser()">Save User</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="modal-overlay" id="profileModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('profileModal')">✕</button>
+    <div class="modal-title">User Profile</div>
+    <div class="profile-header">
+      <div class="profile-avatar-lg" id="pAvatar"></div>
+      <div>
+        <div class="profile-name" id="pName"></div>
+        <div class="profile-email" id="pEmail"></div>
+      </div>
+    </div>
+    <div class="profile-grid" id="pGrid"></div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('profileModal')">Close</button>
+      <button class="btn-remove" id="profileRemoveBtn">🗑️ Remove User</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal" style="max-width:380px">
+    <button class="modal-close" onclick="closeModal('deleteModal')">✕</button>
+    <div class="delete-body">
+      <div class="delete-icon">🗑️</div>
+      <div class="modal-title" style="text-align:center">Remove User</div>
+      <div class="delete-msg" id="deleteMsg"></div>
+    </div>
+    <div class="modal-footer" style="justify-content:center; margin-top:1.5rem">
+      <button class="btn-cancel" onclick="closeModal('deleteModal')">Cancel</button>
+      <button class="btn-delete" onclick="confirmDelete()">Yes, Remove</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toastIcon"></span>
+  <span id="toastMsg"></span>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
