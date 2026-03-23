@@ -9,8 +9,6 @@ A fully functional **Expense Tracker** web application built using pure **HTML, 
 ## 🌐 Live Demo
 >  https://kislaynath.github.io/Spendsmart-expense-tracker/
 
-*(Replace YOUR_USERNAME with your GitHub username after deploying)*
-
 ---
 
 ## 📸 Features
